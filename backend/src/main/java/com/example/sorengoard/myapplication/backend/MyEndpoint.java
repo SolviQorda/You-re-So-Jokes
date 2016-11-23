@@ -6,6 +6,7 @@
 
 package com.example.sorengoard.myapplication.backend;
 
+import com.example.JokesJavaLibrary;
 import com.google.api.server.spi.config.Api;
 import com.google.api.server.spi.config.ApiMethod;
 import com.google.api.server.spi.config.ApiNamespace;
@@ -27,14 +28,14 @@ import javax.inject.Named;
 public class MyEndpoint {
 
     /**
-     * A simple endpoint method that takes a name and says Hi back
+     * A simple endpoint method that takes a joke from the java library and returns it.
      */
-    @ApiMethod(name = "sayHi")
-    public MyBean sayHi(@Named("name") String name) {
+    @ApiMethod(name = "makeJoke")
+    public MyBean makeJoke(@Named("joke") String joke) {
         MyBean response = new MyBean();
-//        JokesJavaLibrary jjl = new JokesJavaLibrary();
-//        String joke = jjl.jokeTwo;
-        response.setData("Hi, " + name);
+        JokesJavaLibrary jjl = new JokesJavaLibrary();
+        String jokeTwo = jjl.jokeTwo;
+        response.setData(jokeTwo);
 
         return response;
     }
