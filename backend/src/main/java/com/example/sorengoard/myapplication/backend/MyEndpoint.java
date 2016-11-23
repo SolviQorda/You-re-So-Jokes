@@ -34,8 +34,8 @@ public class MyEndpoint {
     public MyBean makeJoke(@Named("joke") String joke) {
         MyBean response = new MyBean();
         JokesJavaLibrary jjl = new JokesJavaLibrary();
-        String jokeTwo = jjl.jokeTwo;
-        response.setData(jokeTwo);
+        String randomJoke = jjl.randomJoke;
+        response.setData(randomJoke);
 
         return response;
     }

@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ProgressBar;
 
 import com.example.sorengoard.myapplication.backend.myApi.MyApi;
 import com.google.api.client.extensions.android.http.AndroidHttp;
@@ -21,9 +22,12 @@ import java.io.IOException;
 
 import qorda_projects.jokeandroidlibrary.JokesReceiver;
 
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+
 import static android.R.attr.name;
 import static com.udacity.gradle.builditbigger.EndpointsAsyncTask.jokeString;
-import static qorda_projects.jokeandroidlibrary.JokesReceiverFragment.JOKE_INTENT_KEY;
+
 
 class EndpointsAsyncTask extends AsyncTask<Pair<Context, String>, Void, String> {
     private static MyApi myApiService = null;
@@ -39,12 +43,13 @@ class EndpointsAsyncTask extends AsyncTask<Pair<Context, String>, Void, String> 
                     new AndroidJsonFactory(), null)
                     // options for running against local devappserver
                     // - 10.0.2.2 is localhost's IP address in Android emulator
+                    //192.168.1.169
                     // - turn off compression when running against local devappserver
-                    .setRootUrl("http://192.168.1.169:8080/_ah/api/")
+                    .setRootUrl("http://192.168.200.117:8080/_ah/api/")
                     .setGoogleClientRequestInitializer(new GoogleClientRequestInitializer() {
                         @Override
                         public void initialize(AbstractGoogleClientRequest<?> abstractGoogleClientRequest) throws IOException {
-                            abstractGoogleClientRequest.setDisableGZipContent(true);
+                             abstractGoogleClientRequest.setDisableGZipContent(true);
                         }
                     });
             // end options for devappserver
@@ -77,6 +82,7 @@ public class MainActivity extends AppCompatActivity {
     public final String JOKE_INTENT_KEY = "jokeString";
     public final String LOG_TAG = MainActivity.class.getSimpleName().toString();
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -108,23 +114,22 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-//    JokesJavaLibrary mJokesJavaLibrary = new JokesJavaLibrary();
-//    String jokeString = mJokesJavaLibrary.jokeOne;
-//    String jokeStringTwo = mJokesJavaLibrary.jokeTwo;
-
-    //what is called when the button is pressed.
 
     public void tellJoke(View view) {
-//        Toast.makeText(this, jokeString, Toast.LENGTH_SHORT).show();
-        new EndpointsAsyncTask().execute(new Pair<Context, String>(this, "joke"));
+        MainActivityFragment.showSpinner();
 
+        new EndpointsAsyncTask().execute(new Pair<Context, String>(this, "joke"));
         if (jokeString != null)
         {
             Intent jokeIntent = new Intent(this, JokesReceiver.class);
             jokeIntent.putExtra(JOKE_INTENT_KEY, jokeString);
             Log.v(LOG_TAG, "resultsstr@tellJoke:" + jokeString);
             startActivity(jokeIntent);
+
         }
+//        spinner.setVisibility(View.GONE);
+        MainActivityFragment.hideSpinner();
+
 
     }
 
