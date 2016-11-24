@@ -4,6 +4,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.util.Pair;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -45,7 +47,7 @@ class EndpointsAsyncTask extends AsyncTask<Pair<Context, String>, Void, String> 
                     // - 10.0.2.2 is localhost's IP address in Android emulator
                     //192.168.1.169
                     // - turn off compression when running against local devappserver
-                    .setRootUrl("http://192.168.200.117:8080/_ah/api/")
+                    .setRootUrl("http://192.168.1.188:8080/_ah/api/")
                     .setGoogleClientRequestInitializer(new GoogleClientRequestInitializer() {
                         @Override
                         public void initialize(AbstractGoogleClientRequest<?> abstractGoogleClientRequest) throws IOException {
@@ -81,13 +83,25 @@ public class MainActivity extends AppCompatActivity {
 
     public final String JOKE_INTENT_KEY = "jokeString";
     public final String LOG_TAG = MainActivity.class.getSimpleName().toString();
+    private MainActivityFragment mainActivityFragment;
+
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        if(findViewById(R.id.fragment_container) != null) {
 
+            if (savedInstanceState != null) {
+            return;
+            }
+
+                mainActivityFragment = new MainActivityFragment();
+                getSupportFragmentManager().beginTransaction()
+                        .add(R.id.fragment_container, mainActivityFragment).commit();
+
+        }
 
     }
 
@@ -116,9 +130,13 @@ public class MainActivity extends AppCompatActivity {
 
 
     public void tellJoke(View view) {
-        MainActivityFragment.showSpinner();
+
+        ProgressBar spinner = mainActivityFragment.spinner;
+        spinner.setVisibility(View.VISIBLE);
 
         new EndpointsAsyncTask().execute(new Pair<Context, String>(this, "joke"));
+        spinner.setVisibility(View.GONE);
+//
         if (jokeString != null)
         {
             Intent jokeIntent = new Intent(this, JokesReceiver.class);
@@ -127,8 +145,7 @@ public class MainActivity extends AppCompatActivity {
             startActivity(jokeIntent);
 
         }
-//        spinner.setVisibility(View.GONE);
-        MainActivityFragment.hideSpinner();
+//        mainActivityFragment.hideSpinner();
 
 
     }

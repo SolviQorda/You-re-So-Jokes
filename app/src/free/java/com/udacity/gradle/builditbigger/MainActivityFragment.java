@@ -16,7 +16,7 @@ import com.google.android.gms.ads.AdView;
  */
 public class MainActivityFragment extends Fragment {
 
-    public static ProgressBar spinner;
+    public ProgressBar spinner;
 
     public MainActivityFragment() {
     }
@@ -26,7 +26,7 @@ public class MainActivityFragment extends Fragment {
                              Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_main, container, false);
         spinner = (ProgressBar) root.findViewById(R.id.progressBar);
-        spinner.setVisibility(View.INVISIBLE);
+//        spinner.setVisibility(View.INVISIBLE);
 
         AdView mAdView = (AdView) root.findViewById(R.id.adView);
         // Create an ad request. Check logcat output for the hashed device ID to
@@ -39,11 +39,11 @@ public class MainActivityFragment extends Fragment {
         return root;
     }
 
-    public static void showSpinner() {
+    public void showSpinner() {
         spinner.setVisibility(View.VISIBLE);
     }
 
-    public static void hideSpinner() {
+    public void hideSpinner() {
         spinner.setVisibility(View.INVISIBLE);
     }
 }
