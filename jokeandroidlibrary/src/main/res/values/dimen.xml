@@ -2,4 +2,5 @@
 <resources>
     <dimen name="title_size">48sp</dimen>
     <dimen name="joke_text_size">36sp</dimen>
+    <dimen name="padding">10dp</dimen>
 </resources>

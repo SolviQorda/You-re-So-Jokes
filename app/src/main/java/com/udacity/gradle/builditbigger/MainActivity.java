@@ -21,6 +21,7 @@ import com.google.api.client.googleapis.services.AbstractGoogleClientRequest;
 import com.google.api.client.googleapis.services.GoogleClientRequestInitializer;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 import qorda_projects.jokeandroidlibrary.JokesReceiver;
 
@@ -33,10 +34,19 @@ import static com.udacity.gradle.builditbigger.EndpointsAsyncTask.jokeString;
 
 class EndpointsAsyncTask extends AsyncTask<Pair<Context, String>, Void, String> {
     private static MyApi myApiService = null;
-    private Context context;
+    private Context mContext;
     public static String jokeString;
+    public AsyncCallback mAysncCallback;
 
     private static final String LOG_TAG = EndpointsAsyncTask.class.getSimpleName().toString();
+
+    public EndpointsAsyncTask(AsyncCallback asyncCallback) {
+        mAysncCallback = asyncCallback;
+    }
+
+    public interface AsyncCallback {
+         void onUpdate(String response);
+    }
 
     @Override
     protected String doInBackground(Pair<Context, String>... params) {
@@ -47,7 +57,7 @@ class EndpointsAsyncTask extends AsyncTask<Pair<Context, String>, Void, String> 
                     // - 10.0.2.2 is localhost's IP address in Android emulator
                     //192.168.1.169
                     // - turn off compression when running against local devappserver
-                    .setRootUrl("http://192.168.1.188:8080/_ah/api/")
+                    .setRootUrl("http://192.168.1.201:8080/_ah/api/")
                     .setGoogleClientRequestInitializer(new GoogleClientRequestInitializer() {
                         @Override
                         public void initialize(AbstractGoogleClientRequest<?> abstractGoogleClientRequest) throws IOException {
@@ -59,7 +69,7 @@ class EndpointsAsyncTask extends AsyncTask<Pair<Context, String>, Void, String> 
             myApiService = builder.build();
         }
 
-        context = params[0].first;
+        mContext = params[0].first;
         String joke = params[0].second;
 
         try {
@@ -74,12 +84,13 @@ class EndpointsAsyncTask extends AsyncTask<Pair<Context, String>, Void, String> 
 
         Log.v(LOG_TAG, "resultstr:" + result);
         jokeString = result;
+        mAysncCallback.onUpdate(result);
     }
 
 }
 
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements EndpointsAsyncTask.AsyncCallback{
 
     public final String JOKE_INTENT_KEY = "jokeString";
     public final String LOG_TAG = MainActivity.class.getSimpleName().toString();
@@ -105,6 +116,21 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    public void onUpdate(String response) {
+        ProgressBar spinner = mainActivityFragment.spinner;
+        spinner.setVisibility(View.GONE);
+//
+        if (jokeString != null)
+        {
+            Intent jokeIntent = new Intent(this, JokesReceiver.class);
+            jokeIntent.putExtra(JOKE_INTENT_KEY, jokeString);
+            Log.v(LOG_TAG, "resultsstr@tellJoke:" + jokeString);
+            startActivity(jokeIntent);
+
+        }
+    }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -128,23 +154,13 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-
     public void tellJoke(View view) {
 
         ProgressBar spinner = mainActivityFragment.spinner;
         spinner.setVisibility(View.VISIBLE);
 
-        new EndpointsAsyncTask().execute(new Pair<Context, String>(this, "joke"));
-        spinner.setVisibility(View.GONE);
-//
-        if (jokeString != null)
-        {
-            Intent jokeIntent = new Intent(this, JokesReceiver.class);
-            jokeIntent.putExtra(JOKE_INTENT_KEY, jokeString);
-            Log.v(LOG_TAG, "resultsstr@tellJoke:" + jokeString);
-            startActivity(jokeIntent);
+        new EndpointsAsyncTask(this).execute(new Pair<Context, String>(this, "joke"));
 
-        }
 //        mainActivityFragment.hideSpinner();
 
 

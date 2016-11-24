@@ -26,7 +26,6 @@ public class MainActivityFragment extends Fragment {
                              Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_main, container, false);
         spinner = (ProgressBar) root.findViewById(R.id.progressBar);
-//        spinner.setVisibility(View.INVISIBLE);
 
         AdView mAdView = (AdView) root.findViewById(R.id.adView);
         // Create an ad request. Check logcat output for the hashed device ID to
@@ -37,13 +36,5 @@ public class MainActivityFragment extends Fragment {
                 .build();
         mAdView.loadAd(adRequest);
         return root;
-    }
-
-    public void showSpinner() {
-        spinner.setVisibility(View.VISIBLE);
-    }
-
-    public void hideSpinner() {
-        spinner.setVisibility(View.INVISIBLE);
     }
 }
