@@ -14,16 +14,20 @@ import static org.junit.Assert.assertFalse;
  * Created by sorengoard on 22/11/2016.
  */
 @RunWith(AndroidJUnit4.class)
-public class AsyncAndroidTest {
+public class AsyncAndroidTest implements EndpointsAsyncTask.AsyncCallback{
     public Context getContext() {
         return mContext;
     }
     private Context mContext = getContext();
 
+    public void onUpdate(String result){
+        return;
+    }
+
     @Test
     public void testVerifyAsyncString() {
         try {
-            EndpointsAsyncTask mEndpointsAsyncTask = new EndpointsAsyncTask();
+            EndpointsAsyncTask mEndpointsAsyncTask = new EndpointsAsyncTask(this);
             mEndpointsAsyncTask.execute(new Pair<Context, String>(mContext, "joke"));
             assertFalse(EndpointsAsyncTask.jokeString.isEmpty());
         }catch (Exception e){
